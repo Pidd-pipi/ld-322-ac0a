@@ -24,14 +24,16 @@ docker compose up -d
 - 阈值报警通知：WebSocket 推送报警
 - 设备远程控制：风机、灌溉和补光灯
 - 多温室管理：总览和详情切换
+- 传感器点位交接：育苗季跨温室/种植区转移，历史数据留在原点位
 - 环境分析报告：日报周报和 PDF 导出
 
 ## Demo API
 
 - `GET /api/health`：健康检查
-- `GET /api/dashboard/overview`：温室总览、传感器、报警、设备、报告和历史趋势聚合数据
-- `GET /api/dashboard/greenhouses/{greenhouseId}/history`：按温室查询历史曲线数据
-- `POST /api/dashboard/sensor-readings`：模拟传感器数据接入
+- `GET /api/dashboard/overview`：温室总览、传感器点位、交接记录、报警、设备、报告和历史趋势聚合数据
+- `GET /api/dashboard/greenhouses/{greenhouseId}/history`：按温室查询历史曲线数据（交接前的数据保留在原点位）
+- `POST /api/dashboard/sensors/{id}/handover`：传感器点位交接（目标温室、种植区、交接时间；重复提交返回原因，交接时间须晚于上次）
+- `POST /api/dashboard/sensor-readings`：模拟传感器数据接入（按传感器当前点位入账，阈值报警跟随传感器）
 - `POST /api/dashboard/alarms/{id}/handle`：标记报警已处理
 - `POST /api/dashboard/devices/{id}/toggle`：远程切换设备状态
 - `WS /ws`：模拟实时传感器快照推送

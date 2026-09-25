@@ -14,6 +14,7 @@ wss.on('connection', (client) => {
 });
 
 setInterval(() => {
+  dashboardService.simulateReading();
   const message = JSON.stringify({ type: 'sensor:update', payload: dashboardService.overview().readings });
   wss.clients.forEach((client) => client.send(message));
 }, APP.refreshSeconds * 1000);

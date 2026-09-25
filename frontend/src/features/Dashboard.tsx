@@ -9,8 +9,8 @@ import { SensorCards } from '../components/SensorCards';
 import { TrendPanel } from '../components/TrendPanel';
 import { logger } from '../logger/logger';
 import { toCsv } from '../services/export.service';
-import { fetchOverview, handleAlarm, toggleDevice } from '../services/storage.service';
-import type { GreenOverview } from '../types/domain';
+import { fetchOverview, handleAlarm, submitHandover, toggleDevice } from '../services/storage.service';
+import type { GreenOverview, HandoverPayload } from '../types/domain';
 
 export const Dashboard = () => {
   const [overview, setOverview] = useState<GreenOverview>();
@@ -43,6 +43,13 @@ export const Dashboard = () => {
     await load();
   };
 
+  const onHandover = async (sensorId: string, payload: HandoverPayload) => {
+    const result = await submitHandover(sensorId, payload);
+    logger.info(`sensor ${sensorId} handover submitted`);
+    await load();
+    return result;
+  };
+
   if (error) return <div className="mx-auto max-w-7xl p-6"><Alert type="error" message={error} /></div>;
   if (!overview) return <div className="mx-auto max-w-7xl p-6"><Skeleton active paragraph={{ rows: 8 }} /></div>;
 
@@ -55,11 +62,18 @@ export const Dashboard = () => {
         <MetricCard label="刷新周期" value={`${overview.stats.refreshSeconds}s`} note="实时仪表盘" />
       </section>
 
-      <GreenhouseGrid greenhouses={overview.greenhouses} readings={overview.readings} />
-      <SensorCards readings={overview.readings} />
+      <GreenhouseGrid greenhouses={overview.greenhouses} sensors={overview.sensors} readings={overview.readings} />
+      <SensorCards
+        sensors={overview.sensors}
+        readings={overview.readings}
+        thresholds={overview.thresholds}
+        handovers={overview.handovers}
+        greenhouses={overview.greenhouses}
+        onHandover={onHandover}
+      />
 
       <section className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
-        <TrendPanel history={overview.history} />
+        <TrendPanel history={overview.history} sensors={overview.sensors} handovers={overview.handovers} greenhouses={overview.greenhouses} />
         <AlarmList alarms={overview.alarms} onHandle={onHandleAlarm} />
       </section>
 

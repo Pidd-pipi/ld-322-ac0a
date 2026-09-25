@@ -8,3 +8,7 @@ export const SENSOR_LABELS: Record<string, string> = {
   co2: 'CO2',
   soilMoisture: '土壤湿度',
 };
+
+export const ZONES = ['育苗区', '定植区', '采收区', '缓冲区'];
+
+export const HANDOVER_TIME_FORMAT = 'YYYY-MM-DD HH:mm';

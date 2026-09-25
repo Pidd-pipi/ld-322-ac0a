@@ -1,0 +1,49 @@
+CREATE TABLE IF NOT EXISTS greenhouses (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  code VARCHAR(40) NOT NULL UNIQUE,
+  name VARCHAR(120) NOT NULL,
+  crop VARCHAR(80) NOT NULL,
+  area DECIMAL(10,2) NOT NULL,
+  manager VARCHAR(80) NOT NULL,
+  status VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sensor_readings (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  greenhouse_code VARCHAR(40) NOT NULL,
+  sensor_type VARCHAR(40) NOT NULL,
+  value DECIMAL(12,2) NOT NULL,
+  unit VARCHAR(20) NOT NULL,
+  captured_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS thresholds (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  greenhouse_code VARCHAR(40) NOT NULL,
+  sensor_type VARCHAR(40) NOT NULL,
+  min_value DECIMAL(12,2) NOT NULL,
+  max_value DECIMAL(12,2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS alarms (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  greenhouse_code VARCHAR(40) NOT NULL,
+  sensor_type VARCHAR(40) NOT NULL,
+  message VARCHAR(240) NOT NULL,
+  level_name VARCHAR(40) NOT NULL,
+  handled BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS devices (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  greenhouse_code VARCHAR(40) NOT NULL,
+  name VARCHAR(120) NOT NULL,
+  device_type VARCHAR(40) NOT NULL,
+  online BOOLEAN NOT NULL DEFAULT TRUE,
+  enabled BOOLEAN NOT NULL DEFAULT FALSE,
+  schedule_rule VARCHAR(160) NOT NULL
+);
+
+INSERT INTO greenhouses(code, name, crop, area, manager, status)
+VALUES ('gh-1', '一号番茄温室', '番茄', 960, '陈晓', 'warning');

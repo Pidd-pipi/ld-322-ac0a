@@ -1,0 +1,2 @@
+import type { Config } from 'tailwindcss';
+export default { content: ['./index.html', './src/**/*.{ts,tsx}'], theme: { extend: { colors: { field: '#2f6f5e', sun: '#f0b44c', clay: '#b95738', ink: '#1f3029' }, boxShadow: { soft: '0 18px 45px rgba(31,48,41,.12)' } } }, plugins: [] } satisfies Config;

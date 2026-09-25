@@ -1,0 +1,28 @@
+{
+  "name": "cygreenenv-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 18622",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 18622"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.468.0",
+    "antd": "^5.22.5",
+    "echarts": "^5.5.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "tailwindcss": "^3.4.17",
+    "postcss": "^8.4.49",
+    "autoprefixer": "^10.4.20"
+  }
+}

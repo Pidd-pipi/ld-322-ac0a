@@ -1,0 +1,2 @@
+export const FEATURE_LABELS=["传感器数据接入：多节点环境数据接收","实时监测仪表盘：自动刷新和异常警示","历史曲线查询：多参数对比和 CSV 导出","阈值报警通知：WebSocket 推送报警","设备远程控制：风机、灌溉和补光灯","多温室管理：总览和详情切换","环境分析报告：日报周报和 PDF 导出"] as const;
+export const STATUS_OPTIONS=['待处理','进行中','已完成'] as const;

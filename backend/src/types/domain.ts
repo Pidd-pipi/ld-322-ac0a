@@ -7,9 +7,38 @@ export interface Greenhouse {
   status: 'normal' | 'warning';
 }
 
-export interface SensorReading {
+export interface Zone {
   id: string;
   greenhouseId: string;
+  name: string;
+}
+
+export interface Sensor {
+  id: string;
+  name: string;
+  sensorType: string;
+  unit: string;
+  greenhouseId: string;
+  zoneId: string;
+}
+
+export interface SensorHandover {
+  id: string;
+  sensorId: string;
+  fromGreenhouseId: string;
+  fromZoneId: string;
+  toGreenhouseId: string;
+  toZoneId: string;
+  handoverAt: string;
+  reason: string;
+  createdAt: string;
+}
+
+export interface SensorReading {
+  id: string;
+  sensorId: string;
+  greenhouseId: string;
+  zoneId: string;
   sensorType: string;
   value: number;
   unit: string;
@@ -17,7 +46,7 @@ export interface SensorReading {
 }
 
 export interface Threshold {
-  greenhouseId: string;
+  sensorId: string;
   sensorType: string;
   min: number;
   max: number;
@@ -25,7 +54,9 @@ export interface Threshold {
 
 export interface Alarm {
   id: string;
+  sensorId: string;
   greenhouseId: string;
+  zoneId: string;
   sensorType: string;
   message: string;
   level: 'warning' | 'critical';

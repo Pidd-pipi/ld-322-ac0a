@@ -6,6 +6,8 @@ export const APP = {
 
 export const SENSOR_TYPES = ['temperature', 'humidity', 'light', 'co2', 'soilMoisture'] as const;
 
+export const HANDOVER_TIME_PATTERN = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+
 export const DEVICE_TYPES = {
   fan: '风机',
   shade: '遮阳帘',

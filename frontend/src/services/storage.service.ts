@@ -1,6 +1,16 @@
 import { API_BASE } from '../constants/app.constants';
 import { AppException } from '../errors/AppException';
-import type { GreenOverview } from '../types/domain';
+import type { GreenOverview, SensorHandover } from '../types/domain';
+
+interface ErrorBody {
+  code?: string;
+  message?: string;
+}
+
+const readError = async (response: Response, fallback: string) => {
+  const body = (await response.json().catch(() => ({}))) as ErrorBody;
+  return new AppException(body.code ?? 'REQUEST_FAILED', body.message ?? fallback);
+};
 
 export const fetchOverview = async (): Promise<GreenOverview> => {
   const response = await fetch(`${API_BASE}/dashboard/overview`);
@@ -24,4 +34,24 @@ export const handleAlarm = async (id: string) => {
     throw new AppException('ALARM_HANDLE_FAILED', '报警处理失败');
   }
   return response.json();
+};
+
+export interface HandoverRequest {
+  sensorId: string;
+  toGreenhouseId: string;
+  toZoneId: string;
+  handoverAt: string;
+  reason: string;
+}
+
+export const handoverSensor = async (payload: HandoverRequest): Promise<{ handover: SensorHandover }> => {
+  const response = await fetch(`${API_BASE}/dashboard/sensors/handover`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw await readError(response, '点位交接提交失败');
+  }
+  return response.json() as Promise<{ handover: SensorHandover }>;
 };

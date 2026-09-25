@@ -3,18 +3,22 @@ import { useEffect, useState } from 'react';
 import { AlarmList } from '../components/AlarmList';
 import { DeviceControl } from '../components/DeviceControl';
 import { GreenhouseGrid } from '../components/GreenhouseGrid';
+import { HandoverModal } from '../components/HandoverModal';
 import { MetricCard } from '../components/MetricCard';
 import { ReportPanel } from '../components/ReportPanel';
 import { SensorCards } from '../components/SensorCards';
 import { TrendPanel } from '../components/TrendPanel';
 import { logger } from '../logger/logger';
 import { toCsv } from '../services/export.service';
-import { fetchOverview, handleAlarm, toggleDevice } from '../services/storage.service';
-import type { GreenOverview } from '../types/domain';
+import { fetchOverview, handoverSensor, handleAlarm, toggleDevice } from '../services/storage.service';
+import type { HandoverRequest } from '../services/storage.service';
+import type { GreenOverview, SensorPoint } from '../types/domain';
 
 export const Dashboard = () => {
   const [overview, setOverview] = useState<GreenOverview>();
   const [error, setError] = useState('');
+  const [handoverTarget, setHandoverTarget] = useState<SensorPoint | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const load = async () => {
     try {
@@ -43,6 +47,20 @@ export const Dashboard = () => {
     await load();
   };
 
+  const onHandover = async (payload: HandoverRequest) => {
+    setSubmitting(true);
+    try {
+      await handoverSensor(payload);
+      message.success('点位交接已提交，新的上报将进入新点位');
+      setHandoverTarget(null);
+      await load();
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : '点位交接提交失败');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (error) return <div className="mx-auto max-w-7xl p-6"><Alert type="error" message={error} /></div>;
   if (!overview) return <div className="mx-auto max-w-7xl p-6"><Skeleton active paragraph={{ rows: 8 }} /></div>;
 
@@ -55,11 +73,16 @@ export const Dashboard = () => {
         <MetricCard label="刷新周期" value={`${overview.stats.refreshSeconds}s`} note="实时仪表盘" />
       </section>
 
-      <GreenhouseGrid greenhouses={overview.greenhouses} readings={overview.readings} />
-      <SensorCards readings={overview.readings} />
+      <GreenhouseGrid greenhouses={overview.greenhouses} sensorPoints={overview.sensorPoints} />
+      <SensorCards
+        sensors={overview.sensorPoints}
+        readings={overview.readings}
+        thresholds={overview.thresholds}
+        onHandover={setHandoverTarget}
+      />
 
       <section className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
-        <TrendPanel history={overview.history} />
+        <TrendPanel history={overview.history} sensorPoints={overview.sensorPoints} />
         <AlarmList alarms={overview.alarms} onHandle={onHandleAlarm} />
       </section>
 
@@ -69,6 +92,16 @@ export const Dashboard = () => {
       </section>
 
       <Button onClick={() => navigator.clipboard.writeText(toCsv(overview.history))}>复制历史 CSV</Button>
+
+      <HandoverModal
+        sensor={handoverTarget}
+        greenhouses={overview.greenhouses}
+        zones={overview.zones}
+        open={Boolean(handoverTarget)}
+        submitting={submitting}
+        onCancel={() => setHandoverTarget(null)}
+        onSubmit={onHandover}
+      />
     </div>
   );
 };

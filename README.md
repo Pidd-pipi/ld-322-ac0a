@@ -19,6 +19,7 @@ docker compose up -d
 ## 主要功能
 
 - 传感器数据接入：多节点环境数据接收
+- 传感器点位交接：传感器随育苗季在温室/区域间转移，交接后新读数进入新点位，历史数据留在原处
 - 实时监测仪表盘：自动刷新和异常警示
 - 历史曲线查询：多参数对比和 CSV 导出
 - 阈值报警通知：WebSocket 推送报警
@@ -32,6 +33,8 @@ docker compose up -d
 - `GET /api/dashboard/overview`：温室总览、传感器、报警、设备、报告和历史趋势聚合数据
 - `GET /api/dashboard/greenhouses/{greenhouseId}/history`：按温室查询历史曲线数据
 - `POST /api/dashboard/sensor-readings`：模拟传感器数据接入
+- `POST /api/dashboard/sensors/handover`：传感器点位交接（目标温室、区域、交接时间、原因；交接时间必须晚于上次交接）
+- `GET /api/dashboard/sensors/{sensorId}/handovers`：查询单个传感器的交接记录
 - `POST /api/dashboard/alarms/{id}/handle`：标记报警已处理
 - `POST /api/dashboard/devices/{id}/toggle`：远程切换设备状态
 - `WS /ws`：模拟实时传感器快照推送
